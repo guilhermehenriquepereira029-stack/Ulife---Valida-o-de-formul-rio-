@@ -1,1 +1,144 @@
 # Ulife---Valida-o-de-formul-rio-
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato Integrado - Google Forms</title>
+    <style>
+        /* Cores baseadas em padrões de Landing Pages modernas */
+        :root {
+            --primary: #1d4ed8; 
+            --error: #ef4444;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --text: #1e293b;
+        }
+
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        
+        .contact-box { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 450px; }
+        
+        h2 { margin-bottom: 1.5rem; color: var(--primary); text-align: center; font-size: 1.5rem; }
+
+        .form-group { margin-bottom: 1.2rem; }
+        
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.85rem; }
+        
+        input, textarea {
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; transition: 0.3s; box-sizing: border-box; font-size: 1rem;
+        }
+
+        /* Destaque para campos inválidos */
+        input.invalid, textarea.invalid { border-color: var(--error); background-color: #fff1f2; }
+
+        button {
+            width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center;
+        }
+
+        button:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* Loader - Spinner animado */
+        .loader {
+            display: none; width: 20px; height: 20px; border: 3px solid #ffffff66; border-top: 3px solid white; border-radius: 50%; animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        #success-msg { color: var(--success); display: none; text-align: center; margin-top: 1rem; font-weight: bold; }
+        #error-msg { color: var(--error); display: none; text-align: center; margin-top: 1rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="contact-box">
+    <h2>Enviar Mensagem</h2>
+    
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){handleSubmission();}"></iframe>
+    
+    <form id="google-form" action="https://docs.google.com/forms/d/e/1FAIpQLScdZVDEkLdFUVvcvzqcZqnJToHFA2VZ5TnzYsHt--vJti4SzA/formResponse" method="POST" target="hidden_iframe" onsubmit="return validate();">
+        
+        <div class="form-group">
+            <label>Nome Completo</label>
+            <input type="text" name="entry.1668091557" id="f-name" placeholder="Seu nome">
+        </div>
+
+        <div class="form-group">
+            <label>E-mail</label>
+            <input type="email" name="entry.1650546119" id="f-email" placeholder="seu@email.com">
+        </div>
+
+        <div class="form-group">
+            <label>Telefone</label>
+            <input type="tel" name="entry.1136903226" id="f-phone" placeholder="(00) 00000-0000">
+        </div>
+
+        <div class="form-group">
+            <label>Mensagem</label>
+            <textarea name="entry.1047135473" id="f-msg" rows="4" placeholder="Como podemos ajudar?"></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn">
+            <span id="btnText">Enviar Agora</span>
+            <div class="loader" id="loader"></div>
+        </button>
+
+        <p id="success-msg">✓ Mensagem enviada com sucesso!</p>
+        <p id="error-msg">✕ Falha na conexão. Tente novamente.</p>
+    </form>
+</div>
+
+<script>
+    let submitted = false;
+
+    function validate() {
+        const fields = ['f-name', 'f-email', 'f-phone', 'f-msg'];
+        let isValid = true;
+
+        fields.forEach(id => {
+            const input = document.getElementById(id);
+            if (!input.value.trim()) {
+                input.classList.add('invalid'); // Destaca campo vazio
+                isValid = false;
+            } else {
+                input.classList.remove('invalid');
+            }
+        });
+
+        if (isValid) {
+            // Inicia o estado de carregamento
+            document.getElementById('btnText').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            submitted = true;
+            
+            // Caso a transmissão falhe por rede (opcional)
+            setTimeout(() => {
+                if(submitted && document.getElementById('success-msg').style.display !== 'block') {
+                    // Se após 10s nada acontecer, pode ser erro de conexão
+                    console.log("Checar conexão...");
+                }
+            }, 10000);
+        }
+        return isValid;
+    }
+
+    function handleSubmission() {
+        // Reseta o botão e o formulário
+        document.getElementById('btnText').style.display = 'block';
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('submitBtn').disabled = false;
+        
+        document.getElementById('google-form').reset();
+        document.getElementById('success-msg').style.display = 'block';
+        document.getElementById('error-msg').style.display = 'none';
+        
+        // Esconde a mensagem após alguns segundos
+        setTimeout(() => {
+            document.getElementById('success-msg').style.display = 'none';
+        }, 6000);
+    }
+</script>
+
+</body>
+</html>
